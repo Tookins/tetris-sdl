@@ -58,6 +58,10 @@ void GameRenderer::renderRects(SDL_Rect *rects, int size)
     SDL_RenderFillRects(renderer, rects, size);
 }
 
+void GameRenderer::renderFillRect(SDL_Rect *rect) {
+    SDL_RenderFillRect(renderer, rect);
+}
+
 void GameRenderer::changeColor(int rgb[4])
 {
     SDL_SetRenderDrawColor(renderer, rgb[0], rgb[1], rgb[2], rgb[3]);

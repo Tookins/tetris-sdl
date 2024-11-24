@@ -17,6 +17,7 @@ public:
     void changeColor(int* rgb);
     void renderLine(int* coords);
     void renderRects(SDL_Rect *rects, int size=4);
+    void renderFillRect(SDL_Rect *rect);
     void renderImage(SDL_Texture *tex, SDL_Rect *src, SDL_Rect *dst);
     void renderText(TTF_Font *font, std::string text, SDL_Rect *src, SDL_Rect *dst);
     void display();
