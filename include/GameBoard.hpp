@@ -25,6 +25,7 @@ class GameBoard
     Node getSquare(int i, int j);
     void setSquareColor(int i, int j, int rgba[4]);
     void closeSquare(int i, int j);
+    void clearRow(int i);
 };
 
 #endif

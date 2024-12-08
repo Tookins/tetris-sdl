@@ -53,6 +53,10 @@ void GameRenderer::renderLine(int coords[4]) {
     SDL_RenderDrawLine(renderer, coords[0], coords[1], coords[2], coords[3]);
 }
 
+void GameRenderer::renderRect(SDL_Rect *rect) {
+    SDL_RenderDrawRect(renderer, rect);
+}
+
 void GameRenderer::renderRects(SDL_Rect *rects, int size)
 {
     SDL_RenderFillRects(renderer, rects, size);

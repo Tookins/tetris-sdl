@@ -16,6 +16,7 @@ public:
     void clear();
     void changeColor(int* rgb);
     void renderLine(int* coords);
+    void renderRect(SDL_Rect *rect);
     void renderRects(SDL_Rect *rects, int size=4);
     void renderFillRect(SDL_Rect *rect);
     void renderImage(SDL_Texture *tex, SDL_Rect *src, SDL_Rect *dst);

@@ -18,7 +18,9 @@ class Tetromino {
     void setTheta(int theta);
     SDL_Rect* getBlocks();
     void setBlocks(SDL_Rect rects[4]);
-    virtual void rotate() = 0;
+    int* getColor();
+    void setColor(int rgba[4]);
+    virtual void rotate(GameBoard board) = 0;
     void moveLeft(GameBoard board);
     void moveDown(GameBoard board);
     void moveRight(GameBoard board);
@@ -29,6 +31,7 @@ class Tetromino {
     int m_x;
     int m_y;
     int m_theta;
+    int m_rgba[4];
     SDL_Rect m_blocks[4];
 };
 
@@ -36,55 +39,48 @@ class ITetromino : public Tetromino {
     
     public:
     ITetromino(int x, int y, int theta);
-    void rotate() override;
-
+    void rotate(GameBoard board) override;
 };
 
 class JTetromino : public Tetromino {
 
     public:
     JTetromino(int x, int y, int theta);
-    void rotate() override;
-
+    void rotate(GameBoard board) override;
 };
 
 class LTetromino : public Tetromino {
 
     public:
     LTetromino(int x, int y, int theta);
-    void rotate() override;
-
+    void rotate(GameBoard board) override;
 };
 
 class OTetromino : public Tetromino {
 
     public:
     OTetromino(int x, int y, int theta);
-    void rotate() override;
-
+    void rotate(GameBoard board) override;
 };
 
 class STetromino : public Tetromino {
 
     public:
     STetromino(int x, int y, int theta);
-    void rotate() override;
-
+    void rotate(GameBoard board) override;
 };
 
 class TTetromino : public Tetromino {
 
     public:
     TTetromino(int x, int y, int theta);
-    void rotate() override;
-
+    void rotate(GameBoard board) override;
 };
 
 class ZTetromino : public Tetromino {
 
     public:
     ZTetromino(int x, int y, int theta);
-    void rotate() override;
-
+    void rotate(GameBoard board) override;
 };
 #endif

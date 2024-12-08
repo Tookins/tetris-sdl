@@ -19,12 +19,13 @@
 #include "GameBoard.hpp"
 
 // window constants
-#define SCREEN_HEIGHT 1080
-#define SCREEN_WIDTH 448
+#define SCREEN_HEIGHT 960
+#define SCREEN_WIDTH 960
 #define GRID_SIZE 32
 #define TILE_OFFSET_X 160
 #define TILE_OFFSET_Y 64
-
+#define FPS 60
+#define DIFF_SCALE 1.0
 // function prototypes
 Tetromino *getRandomTet(int num);
 
@@ -34,11 +35,15 @@ int main(int argc, char *argv[])
     // initialize render window
     GameRenderer gWindow("GAME v0.1", SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    // game variables
-    bool isRunning = true;
-
     // initial game board
     GameBoard gBoard = GameBoard();
+
+    // game variables
+    bool isRunning = true;
+    int level = 1;
+    int gameScore = 0;
+    int rowsCleared = 0;
+    int rowsToNextLevel = 10;
 
     // initialize random number generator
     std::random_device rd;
@@ -47,101 +52,133 @@ int main(int argc, char *argv[])
     // create distribution to randomly generate tiles
     std::uniform_int_distribution<int> tetDist(0, 6);
 
+    // generate the initial tetromino
+    int randomNumber = tetDist(gen);
+    Tetromino *nextTet = getRandomTet(randomNumber);
+
     // main game loop
     while (isRunning)
     {
+        Tetromino *currTet = nextTet;
 
-        // generate a random tile
-        int randomNumber = tetDist(gen);
-        Tetromino *tet = getRandomTet(randomNumber);
+        // generate the next random tetromino
+        delete nextTet;
+        randomNumber = tetDist(gen);
+        Tetromino *nextTet = getRandomTet(randomNumber);
+        nextTet->setX(704);
+        nextTet->setY(288);
 
-        while (!tet->isStuck())
+
+        while (!currTet->isStuck())
         {
+            // set block color
+            int *blockColor = currTet->getColor();
 
-            // SET background color
-            int background[4] = {255, 255, 255, 255};
-            gWindow.changeColor(background);
-            gWindow.clear();
-
-            // draw game board
-            for (int i = 0; i < gBoard.getHeight(); i++)
+            // frame start
+            int framesBetweenMoves = 0;
+            while (framesBetweenMoves < DIFF_SCALE * FPS)
             {
-                for (int j = 0; j < gBoard.getWidth(); j++)
+                // get ticks at start of frame
+                Uint32 initialTicks = SDL_GetTicks();
+
+                // SET background color and foreground color
+                int background[4] = {255, 255, 255, 255};
+                gWindow.changeColor(background);
+                gWindow.clear();
+
+                //draw preview
+                int rgbBlack[4] = {0, 0, 0, 255};
+                SDL_Rect previewRect = {480, 64, 448, 448};
+                gWindow.changeColor(rgbBlack);
+                gWindow.renderRect(&previewRect);
+                gWindow.changeColor(nextTet->getColor());
+                gWindow.renderRects(nextTet->getBlocks());
+
+                //draw scoreboard
+
+                // draw game board
+                for (int i = 0; i < gBoard.getHeight(); i++)
                 {
-                    Node square = gBoard.getSquare(i, j);
-                    gWindow.changeColor(square.m_rgba);
-                    gWindow.renderFillRect(&square.m_square);
-                }
-            }
-
-            // draw grid lines
-            int rgb[4] = {0, 0, 0, 255};
-            gWindow.changeColor(rgb);
-            for (int j = 0; j <= 10; j++)
-            {
-                int vline[4] = {64 + j * GRID_SIZE, 64, 64 + j * GRID_SIZE, 704};
-                gWindow.renderLine(vline);
-            }
-            for (int i = 0; i <= 20; i++)
-            {
-                int hline[4] = {64, 64 + i * GRID_SIZE, 384, 64 + i * GRID_SIZE};
-                gWindow.renderLine(hline);
-            }
-
-            // draw tetromino
-            int blockColor[4] = {0, 0, 255, 255};
-            gWindow.changeColor(blockColor);
-            gWindow.renderRects(tet->getBlocks());
-
-            // display screen
-            gWindow.display();
-
-            bool isTetrominostuck = true; // flag to check if tetromino can move
-
-            SDL_Event event;
-            while (SDL_PollEvent(&event))
-            {
-                if (event.type == SDL_QUIT)
-                {
-                    isRunning = false;
-                }
-                else if (event.type == SDL_KEYDOWN)
-                {
-
-                    switch (event.key.keysym.sym)
+                    for (int j = 0; j < gBoard.getWidth(); j++)
                     {
-
-                    case SDLK_UP:
-                        tet->rotate();
-                        break;
-
-                    case SDLK_DOWN:
-                        tet->moveDown(gBoard);
-                        break;
-
-                    case SDLK_LEFT:
-                        tet->moveLeft(gBoard);
-                        break;
-
-                    case SDLK_RIGHT:
-                        tet->moveRight(gBoard);
-                        break;
-
-                    default:
-                        break;
+                        Node square = gBoard.getSquare(i, j);
+                        gWindow.changeColor(square.m_rgba);
+                        gWindow.renderFillRect(&square.m_square);
                     }
                 }
+
+                // draw currTetromino
+                gWindow.changeColor(currTet->getColor());
+                gWindow.renderRects(currTet->getBlocks());
+
+                // draw grid lines
+                gWindow.changeColor(rgbBlack);
+                for (int j = 0; j <= 10; j++)
+                {
+                    int vline[4] = {64 + j * GRID_SIZE, 64, 64 + j * GRID_SIZE, 704};
+                    gWindow.renderLine(vline);
+                }
+                for (int i = 0; i <= 20; i++)
+                {
+                    int hline[4] = {64, 64 + i * GRID_SIZE, 384, 64 + i * GRID_SIZE};
+                    gWindow.renderLine(hline);
+                }
+
+                // display screen
+                gWindow.display();
+
+                bool isTetrominostuck = true; // flag to check if tetromino can move
+
+                SDL_Event event;
+                while (SDL_PollEvent(&event))
+                {
+                    if (event.type == SDL_QUIT)
+                    {
+                        isRunning = false;
+                    }
+                    else if (event.type == SDL_KEYDOWN)
+                    {
+
+                        switch (event.key.keysym.sym)
+                        {
+
+                        case SDLK_UP:
+                            currTet->rotate(gBoard);
+                            break;
+
+                        case SDLK_DOWN:
+                            currTet->moveDown(gBoard);
+                            break;
+
+                        case SDLK_LEFT:
+                            currTet->moveLeft(gBoard);
+                            break;
+
+                        case SDLK_RIGHT:
+                            currTet->moveRight(gBoard);
+                            break;
+
+                        default:
+                            break;
+                        }
+                    }
+                }
+
+                // update game
+                Uint32 finalTicks = SDL_GetTicks();
+                Uint32 ticksPerFrame = 1000 / FPS;
+                SDL_Delay(ticksPerFrame - (finalTicks - initialTicks));
+                // end frame
+                framesBetweenMoves++;
             }
 
-            // update game
-
             // make the block drop
-            tet->moveDown(gBoard);
+            currTet->moveDown(gBoard);
 
             // add tetromino to board if it is stuck
-            if (tet->isStuck())
+            if (currTet->isStuck())
             {
-                SDL_Rect *blocks = tet->getBlocks();
+                SDL_Rect *blocks = currTet->getBlocks();
                 for (int i = 0; i < 4; i++)
                 {
                     int boardX = (blocks[i].x - 32) / 32;
@@ -151,13 +188,37 @@ int main(int argc, char *argv[])
                 }
             }
 
-            SDL_Delay(500);
+            // check if any rows are full top to bottom
+            for (int i = 0; i < HEIGHT - 1; i++)
+            {
+                bool rowFull = true;
+                for (int j = 1; j < (WIDTH - 1); j++)
+                {
+                    if (gBoard.m_squares[i][j].m_open)
+                    {
+                        rowFull = false;
+                        break;
+                    }
+                }
+                if (rowFull) // a completed row exists
+                {
+                    gBoard.clearRow(i);
+                    rowsCleared++;
+                    rowsToNextLevel--;
+                    if (rowsToNextLevel == 0)
+                    {
+                        level++;
+                        rowsToNextLevel = 10;
+                    }
+                    gameScore += 80 + 20 * level;
+                    std::cout << "score: " << gameScore << std::endl;
+                }
+            }
         }
-        delete tet;
+        delete currTet;
     }
 
     std::cout << "Shutting Down" << std::endl;
-    SDL_Delay(2000);
     gWindow.destroy();
     SDL_Quit();
 

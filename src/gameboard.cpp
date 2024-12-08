@@ -49,3 +49,18 @@ void GameBoard::setSquareColor(int i, int j, int rgba[4]) {
 void GameBoard::closeSquare(int i, int j) {
     m_squares[i][j].m_open = false;
 }
+
+void GameBoard::clearRow(int i) {
+    //starting at the full row, copy the contents of the row above 
+    //into the row below, add empty row at the top
+    for (int index = i; i > 1; i--) {
+        for (int j=1; j<11; j++) {
+            this->m_squares[i][j].m_open = this->m_squares[i - 1][j].m_open;
+            this->m_squares[i][j].m_rgba[0] = this->m_squares[i-1][j].m_rgba[0];
+            this->m_squares[i][j].m_rgba[1] = this->m_squares[i-1][j].m_rgba[1];
+            this->m_squares[i][j].m_rgba[2] = this->m_squares[i-1][j].m_rgba[2];
+            this->m_squares[i][j].m_rgba[3] = this->m_squares[i-1][j].m_rgba[3];
+        }
+    }
+
+}

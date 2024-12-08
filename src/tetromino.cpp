@@ -51,6 +51,20 @@ void Tetromino::setBlocks(SDL_Rect rects[4])
     };
 }
 
+int *Tetromino::getColor()
+{
+    return m_rgba;
+}
+
+void Tetromino::setColor(int rgba[4])
+{
+
+    for (int i = 0; i < 4; i++)
+    {
+        m_rgba[i] = rgba[i];
+    }
+}
+
 void Tetromino::moveLeft(GameBoard board)
 {
     bool canMove = true;
@@ -94,7 +108,9 @@ void Tetromino::moveDown(GameBoard board)
         {
             m_blocks[i].y += GRID_SIZE;
         }
-    } else {
+    }
+    else
+    {
         m_stuck = true;
     }
 }
@@ -121,7 +137,8 @@ void Tetromino::moveRight(GameBoard board)
     }
 }
 
-bool Tetromino::isStuck() {
+bool Tetromino::isStuck()
+{
     return m_stuck;
 }
 
@@ -134,10 +151,12 @@ ITetromino::ITetromino(int x, int y, int theta) : Tetromino(x, y, theta)
                          {x + 2 * GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE},
                          {x + 3 * GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE}};
     this->setBlocks(rects);
-    // assign border values
+    // assign color
+    int rgba[4] = {255, 0, 0, 255};
+    this->setColor(rgba);
 }
 
-void ITetromino::rotate()
+void ITetromino::rotate(GameBoard board)
 {
     int x = this->getX();
     int y = this->getY();
@@ -179,8 +198,21 @@ void ITetromino::rotate()
         rects[3] = {x + 3 * GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE};
         break;
     }
-    this->setTheta(theta);
-    this->setBlocks(rects);
+    bool canRotate = true;
+    for (SDL_Rect re : rects)
+    {
+        int boardX = (re.x - 32) / GRID_SIZE;
+        int boardY = (re.y - 64) / GRID_SIZE;
+        if (!board.m_squares[boardY][boardX].m_open)
+        {
+            canRotate = false;
+        }
+    }
+    if (canRotate)
+    {
+        this->setTheta(theta);
+        this->setBlocks(rects);
+    }
 }
 
 JTetromino::JTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
@@ -191,9 +223,11 @@ JTetromino::JTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
                          {x + GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE},
                          {x + 2 * GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE}};
     this->setBlocks(rects);
+    // assign color
+    int rgba[4] = {0,255,0,255};
+    this->setColor(rgba);
 }
-
-void JTetromino::rotate()
+void JTetromino::rotate(GameBoard board)
 {
     int x = this->getX();
     int y = this->getY();
@@ -235,8 +269,21 @@ void JTetromino::rotate()
         rects[3] = {x + 2 * GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE};
         break;
     }
-    this->setTheta(theta);
-    this->setBlocks(rects);
+    bool canRotate = true;
+    for (SDL_Rect re : rects)
+    {
+        int boardX = (re.x - 32) / GRID_SIZE;
+        int boardY = (re.y - 64) / GRID_SIZE;
+        if (!board.m_squares[boardY][boardX].m_open)
+        {
+            canRotate = false;
+        }
+    }
+    if (canRotate)
+    {
+        this->setTheta(theta);
+        this->setBlocks(rects);
+    }
 }
 
 LTetromino::LTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
@@ -247,9 +294,11 @@ LTetromino::LTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
                          {x + GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE},
                          {x + 2 * GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE}};
     this->setBlocks(rects);
+    // set color
+    int rgba[4] = {0,0,255,255};
+    this->setColor(rgba);
 }
-
-void LTetromino::rotate()
+void LTetromino::rotate(GameBoard board)
 {
     int x = this->getX();
     int y = this->getY();
@@ -291,8 +340,21 @@ void LTetromino::rotate()
         rects[3] = {x + 2 * GRID_SIZE, y, GRID_SIZE, GRID_SIZE};
         break;
     }
-    this->setTheta(theta);
-    this->setBlocks(rects);
+    bool canRotate = true;
+    for (SDL_Rect re : rects)
+    {
+        int boardX = (re.x - 32) / GRID_SIZE;
+        int boardY = (re.y - 64) / GRID_SIZE;
+        if (!board.m_squares[boardY][boardX].m_open)
+        {
+            canRotate = false;
+        }
+    }
+    if (canRotate)
+    {
+        this->setTheta(theta);
+        this->setBlocks(rects);
+    }
 }
 
 OTetromino::OTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
@@ -303,9 +365,12 @@ OTetromino::OTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
                          {x, y + GRID_SIZE, GRID_SIZE, GRID_SIZE},
                          {x + GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE}};
     this->setBlocks(rects);
+    // assign color
+    int rgba[4] = {0,255,255,255};
+    this->setColor(rgba);
 }
 
-void OTetromino::rotate()
+void OTetromino::rotate(GameBoard board)
 {
     int x = this->getX();
     int y = this->getY();
@@ -347,8 +412,21 @@ void OTetromino::rotate()
         rects[3] = {x + GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE};
         break;
     }
-    this->setTheta(theta);
-    this->setBlocks(rects);
+    bool canRotate = true;
+    for (SDL_Rect re : rects)
+    {
+        int boardX = (re.x - 32) / GRID_SIZE;
+        int boardY = (re.y - 64) / GRID_SIZE;
+        if (!board.m_squares[boardY][boardX].m_open)
+        {
+            canRotate = false;
+        }
+    }
+    if (canRotate)
+    {
+        this->setTheta(theta);
+        this->setBlocks(rects);
+    }
 }
 
 STetromino::STetromino(int x, int y, int theta) : Tetromino(x, y, theta)
@@ -359,9 +437,12 @@ STetromino::STetromino(int x, int y, int theta) : Tetromino(x, y, theta)
                          {x, y + GRID_SIZE, GRID_SIZE, GRID_SIZE},
                          {x + GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE}};
     this->setBlocks(rects);
+    // assign color
+    int rgba[4] = {255,0,255,255};
+    this->setColor(rgba);
 }
 
-void STetromino::rotate()
+void STetromino::rotate(GameBoard board)
 {
     int x = this->getX();
     int y = this->getY();
@@ -403,8 +484,21 @@ void STetromino::rotate()
         rects[3] = {x + GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE};
         break;
     }
-    this->setTheta(theta);
-    this->setBlocks(rects);
+    bool canRotate = true;
+    for (SDL_Rect re : rects)
+    {
+        int boardX = (re.x - 32) / GRID_SIZE;
+        int boardY = (re.y - 64) / GRID_SIZE;
+        if (!board.m_squares[boardY][boardX].m_open)
+        {
+            canRotate = false;
+        }
+    }
+    if (canRotate)
+    {
+        this->setTheta(theta);
+        this->setBlocks(rects);
+    }
 }
 
 TTetromino::TTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
@@ -415,9 +509,12 @@ TTetromino::TTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
                          {x + GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE},
                          {x + 2 * GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE}};
     this->setBlocks(rects);
+    // assign color
+    int rgba[4] = {255,255,0,255};
+    this->setColor(rgba);
 }
 
-void TTetromino::rotate()
+void TTetromino::rotate(GameBoard board)
 {
     int x = this->getX();
     int y = this->getY();
@@ -459,8 +556,21 @@ void TTetromino::rotate()
         rects[3] = {x + 2 * GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE};
         break;
     }
-    this->setTheta(theta);
-    this->setBlocks(rects);
+    bool canRotate = true;
+    for (SDL_Rect re : rects)
+    {
+        int boardX = (re.x - 32) / GRID_SIZE;
+        int boardY = (re.y - 64) / GRID_SIZE;
+        if (!board.m_squares[boardY][boardX].m_open)
+        {
+            canRotate = false;
+        }
+    }
+    if (canRotate)
+    {
+        this->setTheta(theta);
+        this->setBlocks(rects);
+    }
 }
 
 ZTetromino::ZTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
@@ -471,9 +581,12 @@ ZTetromino::ZTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
                          {x + GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE},
                          {x + 2 * GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE}};
     this->setBlocks(rects);
+    // assign color
+    int rgba[4] = {165, 165, 0, 255};
+    this->setColor(rgba);
 }
 
-void ZTetromino::rotate()
+void ZTetromino::rotate(GameBoard board)
 {
     int x = this->getX();
     int y = this->getY();
@@ -515,6 +628,19 @@ void ZTetromino::rotate()
         rects[3] = {x + 2 * GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE};
         break;
     }
-    this->setTheta(theta);
-    this->setBlocks(rects);
+    bool canRotate = true;
+    for (SDL_Rect re : rects)
+    {
+        int boardX = (re.x - 32) / GRID_SIZE;
+        int boardY = (re.y - 64) / GRID_SIZE;
+        if (!board.m_squares[boardY][boardX].m_open)
+        {
+            canRotate = false;
+        }
+    }
+    if (canRotate)
+    {
+        this->setTheta(theta);
+        this->setBlocks(rects);
+    }
 }
