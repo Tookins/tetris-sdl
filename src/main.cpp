@@ -62,9 +62,8 @@ int main(int argc, char *argv[])
         Tetromino *currTet = nextTet;
 
         // generate the next random tetromino
-        delete nextTet;
         randomNumber = tetDist(gen);
-        Tetromino *nextTet = getRandomTet(randomNumber);
+        nextTet = getRandomTet(randomNumber);
         nextTet->setX(704);
         nextTet->setY(288);
 
@@ -216,6 +215,10 @@ int main(int argc, char *argv[])
             }
         }
         delete currTet;
+    }
+
+    if (nextTet != nullptr) {
+        delete nextTet;
     }
 
     std::cout << "Shutting Down" << std::endl;

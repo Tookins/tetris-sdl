@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <iostream>
 #include "Tetromino.hpp"
 
 #define GRID_SIZE 32
@@ -158,6 +159,7 @@ ITetromino::ITetromino(int x, int y, int theta) : Tetromino(x, y, theta)
 
 void ITetromino::rotate(GameBoard board)
 {
+    std::cout << "rotate i\n";
     int x = this->getX();
     int y = this->getY();
     int theta = this->getTheta();
@@ -224,11 +226,13 @@ JTetromino::JTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
                          {x + 2 * GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE}};
     this->setBlocks(rects);
     // assign color
-    int rgba[4] = {0,255,0,255};
+    int rgba[4] = {0, 255, 0, 255};
     this->setColor(rgba);
 }
 void JTetromino::rotate(GameBoard board)
 {
+    std::cout << "rotate j\n";
+
     int x = this->getX();
     int y = this->getY();
     int theta = this->getTheta();
@@ -295,11 +299,13 @@ LTetromino::LTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
                          {x + 2 * GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE}};
     this->setBlocks(rects);
     // set color
-    int rgba[4] = {0,0,255,255};
+    int rgba[4] = {0, 0, 255, 255};
     this->setColor(rgba);
 }
 void LTetromino::rotate(GameBoard board)
 {
+    std::cout << "rotate l\n";
+
     int x = this->getX();
     int y = this->getY();
     int theta = this->getTheta();
@@ -366,12 +372,14 @@ OTetromino::OTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
                          {x + GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE}};
     this->setBlocks(rects);
     // assign color
-    int rgba[4] = {0,255,255,255};
+    int rgba[4] = {0, 255, 255, 255};
     this->setColor(rgba);
 }
 
 void OTetromino::rotate(GameBoard board)
 {
+    std::cout << "rotate 0\n";
+
     int x = this->getX();
     int y = this->getY();
     int theta = this->getTheta();
@@ -438,12 +446,14 @@ STetromino::STetromino(int x, int y, int theta) : Tetromino(x, y, theta)
                          {x + GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE}};
     this->setBlocks(rects);
     // assign color
-    int rgba[4] = {255,0,255,255};
+    int rgba[4] = {255, 0, 255, 255};
     this->setColor(rgba);
 }
 
 void STetromino::rotate(GameBoard board)
 {
+    std::cout << "rotate s\n";
+
     int x = this->getX();
     int y = this->getY();
     int theta = this->getTheta();
@@ -510,12 +520,14 @@ TTetromino::TTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
                          {x + 2 * GRID_SIZE, y + GRID_SIZE, GRID_SIZE, GRID_SIZE}};
     this->setBlocks(rects);
     // assign color
-    int rgba[4] = {255,255,0,255};
+    int rgba[4] = {255, 255, 0, 255};
     this->setColor(rgba);
 }
 
 void TTetromino::rotate(GameBoard board)
 {
+    std::cout << "rotate t\n";
+
     int x = this->getX();
     int y = this->getY();
     int theta = this->getTheta();
@@ -588,6 +600,8 @@ ZTetromino::ZTetromino(int x, int y, int theta) : Tetromino(x, y, theta)
 
 void ZTetromino::rotate(GameBoard board)
 {
+    std::cout << "rotate z\n";
+
     int x = this->getX();
     int y = this->getY();
     int theta = this->getTheta();
